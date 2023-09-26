@@ -35,8 +35,8 @@ animations = [ {
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 35, 36.25 )
 
-[node name="Player" type="Area2D"]
-position = Vector2( 89, 113 )
+[node name="Player" type="Area2D" groups=["coins"]]
+position = Vector2( 1, -1 )
 script = ExtResource( 13 )
 speed = 300
 
@@ -45,9 +45,10 @@ position = Vector2( 1, 0 )
 scale = Vector2( 3, 3 )
 frames = SubResource( 1 )
 animation = "idle"
-frame = 3
 playing = true
 offset = Vector2( 0, -5 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
+
+[connection signal="area_entered" from="." to="." method="_on_Player_area_entered"]

@@ -1,10 +1,14 @@
 extends Area2D
 
+signal pickup
+signal hurt
+
 
 export (int) var speed
 # Declare member variables here. Examples:
-var screensize = Vector2(480, 720)
+var screensize = Vector2(ProjectSettings.get_setting("display/window/size/width"), ProjectSettings.get_setting("display/window/size/height"))
 var velocity = Vector2()
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -20,10 +24,10 @@ func _process(delta):
 		$AnimatedSprite.flip_h = velocity.x < 0
 	else:
 		$AnimatedSprite.animation = "idle"
-	print("FPS: %s" % round(1/delta))
+	#print("FPS: %s" % round(1/delta))
 	position += velocity * delta
-	position.x = clamp(position.x, 0, 480)
-	position.y = clamp(position.y, 0 , 720)
+	position.x = clamp(position.x, 0, screensize.x)
+	position.y = clamp(position.y, 0 , screensize.y)
 
 func get_input():
 	velocity = Vector2()
@@ -40,5 +44,26 @@ func get_input():
 		p_speed *= 2
 	if velocity.length() > 0:
 		velocity = velocity.normalized() * p_speed
+
+func start(start_pos: Vector2):
+	set_process(true)
+	position.x = start_pos.x
+	position.y = start_pos.y
+	$AnimatedSprite.animation = "idle"
+	return
+
+func die():
+	set_process(false)
+	print("GAME OVER")
 	
 	
+
+
+func _on_Player_area_entered(area):
+	if area.is_in_group("coins"):
+		area.pickup()
+		emit_signal("pickup")
+	if area.is_in_group("obstacles"):
+		emit_signal("hurt")
+		die()
+	pass # Replace with function body.
